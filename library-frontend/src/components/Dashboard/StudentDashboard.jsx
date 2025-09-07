@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Dashboard.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function StudentDashboard() {
   const [booksBorrowed, setBooksBorrowed] = useState(0);
   const [nextDueDate, setNextDueDate] = useState('Loading...');
@@ -11,7 +11,7 @@ function StudentDashboard() {
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/dashboard/student/${userId}`);
+        const res = await axios.get(`${API_URL}/dashboard/student/${userId}`);
         setBooksBorrowed(res.data.booksIssued);
         setNextDueDate(res.data.nextDueDate || 'No active books');
       } catch (err) {

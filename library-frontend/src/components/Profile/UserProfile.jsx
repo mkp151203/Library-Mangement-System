@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BackButton from '../common/BackButton';
 import './UserProfile.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function UserProfile() {
   const userId = localStorage.getItem('user_id');
   const [profile, setProfile] = useState(null);
@@ -21,7 +21,7 @@ function UserProfile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/users/${userId}`);
+      const res = await axios.get(`${API_URL}/users/${userId}`);
       console.log('✅ Profile fetched:', res.data);
       if (res.data) {
         setProfile(res.data);
@@ -57,9 +57,9 @@ function UserProfile() {
     e.preventDefault();
     try {
       if (isNew) {
-        await axios.post('http://localhost:5000/users', profile);
+        await axios.post(`${API_URL}/users`, profile);
       } else {
-        await axios.put(`http://localhost:5000/users/${userId}`, profile);
+        await axios.put(`${API_URL}/users/${userId}`, profile);
       }
       setIsEditing(false);
       setIsNew(false);

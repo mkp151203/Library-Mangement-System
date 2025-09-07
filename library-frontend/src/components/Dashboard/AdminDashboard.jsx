@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function AdminDashboard() {
   const [stats, setStats] = useState({});
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/dashboard/stats')
+    fetch(`${API_URL}/dashboard/stats`)
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(err => console.error('Error fetching stats:', err));
 
-    fetch('http://localhost:5000/dashboard/recent-activities')
+    fetch(`${API_URL}/dashboard/recent-activities`)
       .then(res => res.json())
       .then(data => setActivities(data))
       .catch(err => console.error('Error fetching activities:', err));

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import BackButton from '../common/BackButton';
 import './IssueBook.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function IssueBook() {
   const [issueForm, setIssueForm] = useState({
     studentId: '',
@@ -12,7 +12,7 @@ function IssueBook() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/issue', {
+      const res = await fetch(`${API_URL}/api/issue`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(issueForm)

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BackButton from '../common/BackButton';
 import './Books.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function Books() {
   const [books, setBooks] = useState([]);
   const [newBook, setNewBook] = useState({
@@ -21,7 +21,7 @@ function Books() {
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/books');
+      const res = await axios.get(`${API_URL}/books`);
       setBooks(res.data);
     } catch (err) {
       console.error('❌ Failed to fetch books:', err);
@@ -31,7 +31,7 @@ function Books() {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/books', newBook);
+      await axios.post(`${API_URL}/books`, newBook);
       setNewBook({
         title: '',
         author: '',
@@ -52,7 +52,7 @@ function Books() {
     // Only proceed with deletion if user clicked OK
     if (isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/books/${id}`);
+        await axios.delete(`${API_URL}/books/${id}`);
         fetchBooks();
       } catch (err) {
         alert(err.response?.data?.error || '❌ Failed to delete book');

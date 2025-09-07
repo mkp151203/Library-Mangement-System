@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css'; // Reuse login styles
-
+const API_URL = import.meta.env.VITE_API_URL;
 function Register() {
   const [form, setForm] = useState({ username: '', password: '', role: 'student', specialCode: '' });
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:5000/register', {
+    const res = await fetch(`${API_URL}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)

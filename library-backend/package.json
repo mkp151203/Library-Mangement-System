@@ -1,0 +1,30 @@
+{
+  "name": "library-backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "oracledb": "^6.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "description": "Backend API server for the library application",
+  "main": "server.js",
+  "keywords": [
+    "express",
+    "backend",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC"
+}

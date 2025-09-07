@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import BackButton from '../common/BackButton';
 import './IssuedBooks.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function IssuedBooks() {
   const [issuedBooks, setIssuedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ function IssuedBooks() {
         const role = localStorage.getItem('role');
 
         const response = await fetch(
-          `http://localhost:5000/books/issued?userId=${userId}&role=${role}`
+          `${API_URL}/books/issued?userId=${userId}&role=${role}`
         );
         const data = await response.json();
         setIssuedBooks(data);
