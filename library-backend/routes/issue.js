@@ -12,7 +12,7 @@ router.post('/issue', async (req, res) => {
   `;
   const issueQuery = `
     INSERT INTO issued_books (id, book_id, user_id, issue_date, due_date, returned)
-    VALUES (issued_books_seq.NEXTVAL, :bookId, :studentId, SYSDATE, TO_DATE(:dueDate, 'YYYY-MM-DD'), 'N')
+    VALUES (issue_seq.NEXTVAL, :bookId, :studentId, SYSDATE, TO_DATE(:dueDate, 'YYYY-MM-DD'), 'N')
   `;
   const updateBookQuery = `
     UPDATE books SET available = 'N' WHERE id = :bookId

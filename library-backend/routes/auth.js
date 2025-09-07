@@ -5,7 +5,7 @@ import { getConnection } from '../db.js';
 
 const router = express.Router();
 
-// 🔐 LOGIN ROUTE
+// 🔐 LOGIN ROUTE (no changes)
 router.post('/login', async (req, res) => {
   const { username, password, role } = req.body;
 
@@ -76,26 +76,38 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ message: 'Username already exists' });
     }
 
-    // 🔐 If admin, check special code
+    // New logic to check for the first admin
     if (role === 'admin') {
-      const adminRes = await connection.execute(
-        `SELECT * FROM (
-           SELECT password FROM users WHERE role = 'admin' ORDER BY id
-         ) WHERE ROWNUM = 1`,
+      const existingAdmins = await connection.execute(
+        `SELECT COUNT(*) AS admin_count FROM users WHERE role = 'admin'`,
         [],
         { outFormat: oracledb.OUT_FORMAT_OBJECT }
       );
 
-      const firstAdminPassword = adminRes.rows[0]?.PASSWORD;
+      const adminCount = existingAdmins.rows[0].ADMIN_COUNT;
 
-      if (!firstAdminPassword) {
-        return res.status(403).json({ message: 'No existing admin found for verification' });
-      }
+      if (adminCount === 0) {
+        // Allow first admin to register without special code
+        // and proceed to the hashing and insertion step below.
+      } else {
+        // If other admins exist, require a special code.
+        const firstAdminRes = await connection.execute(
+          `SELECT password FROM users WHERE role = 'admin' AND ROWNUM = 1`,
+          [],
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
 
-      const validCode = await bcrypt.compare(specialCode || '', firstAdminPassword);
+        const firstAdminPassword = firstAdminRes.rows[0]?.PASSWORD;
+        if (!firstAdminPassword) {
+          // This case should ideally not happen if adminCount > 0
+          return res.status(500).json({ message: 'Verification password not found' });
+        }
 
-      if (!validCode) {
-        return res.status(403).json({ message: 'Invalid special code for admin registration' });
+        const validCode = await bcrypt.compare(specialCode || '', firstAdminPassword);
+
+        if (!validCode) {
+          return res.status(403).json({ message: 'Invalid special code for admin registration' });
+        }
       }
     }
 
@@ -104,7 +116,7 @@ router.post('/register', async (req, res) => {
 
     await connection.execute(
       `INSERT INTO users (id, username, password, role) 
-       VALUES (user_seq.NEXTVAL, :username, :password, :role)`,
+        VALUES (user_seq.NEXTVAL, :username, :password, :role)`,
       { username, password: hashedPassword, role },
       { autoCommit: true }
     );
