@@ -39,6 +39,63 @@ A full-stack Library Management System built with a React frontend, Node.js/Expr
     └── package.json
 ```
 
+## 💾 Database Schema
+
+The application uses four main tables in the Oracle database.
+
+(version - Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production)
+
+### 1. `USERS`
+Stores user credentials for authentication.
+
+| Column   | Type          | Constraints |
+|----------|---------------|-------------|
+| ID       | NUMBER        | NOT NULL    |
+| USERNAME | VARCHAR2(50)  | NOT NULL    |
+| PASSWORD | VARCHAR2(255) | NOT NULL    |
+| ROLE     | VARCHAR2(20)  | NOT NULL    |
+
+### 2. `BOOKS`
+Contains the library's book collection.
+
+| Column        | Type           | Constraints |
+|---------------|----------------|-------------|
+| ID            | NUMBER         | NOT NULL    |
+| TITLE         | VARCHAR2(255)  | NOT NULL    |
+| AUTHOR        | VARCHAR2(255)  | NOT NULL    |
+| GENRE         | VARCHAR2(100)  |             |
+| PUBLISHEDYEAR | NUMBER         |             |
+| AVAILABLE     | CHAR(1)        |             |
+| COVER         | VARCHAR2(1000) |             |
+
+### 3. `USER_PROFILES`
+Stores detailed information about each user.
+
+| Column       | Type           | Constraints |
+|--------------|----------------|-------------|
+| USER_ID      | NUMBER         | NOT NULL    |
+| NAME         | VARCHAR2(100)  |             |
+| EMAIL        | VARCHAR2(100)  |             |
+| ROLE         | VARCHAR2(20)   |             |
+| DEPARTMENT   | VARCHAR2(100)  |             |
+| YEAR         | VARCHAR2(50)   |             |
+| JOIN_DATE    | DATE           |             |
+| BOOKS_ISSUED | NUMBER         |             |
+| AVATAR       | VARCHAR2(1000) |             |
+
+### 4. `ISSUED_BOOKS`
+Tracks books that are currently issued to users.
+
+| Column     | Type    | Constraints |
+|------------|---------|-------------|
+| ID         | NUMBER  | NOT NULL    |
+| BOOK_ID    | NUMBER  | NOT NULL    |
+| USER_ID    | NUMBER  | NOT NULL    |
+| ISSUE_DATE | DATE    |             |
+| DUE_DATE   | DATE    |             |
+| RETURNED   | CHAR(1) |             |
+
+
 ## 🛠️ Installation & Setup
 
 To get this project up and running locally, please follow these steps.
@@ -47,6 +104,7 @@ To get this project up and running locally, please follow these steps.
 
 - [Node.js](https://nodejs.org/) (which includes npm)
 - Access to an OracleDB instance and its connection details.
+- You need to install oracle database and set up the tables proplerly according to the given structure above.
 
 ### 1. Clone the Repository
 
