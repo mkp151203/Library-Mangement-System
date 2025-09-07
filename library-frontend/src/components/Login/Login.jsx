@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 const API_URL = import.meta.env.VITE_API_URL;
+console.log("API URL:", API_URL);
 function Login() {
   const [credentials, setCredentials] = useState({ username: '', password: '', role: 'student' });
   const navigate = useNavigate();

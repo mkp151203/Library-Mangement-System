@@ -25,6 +25,9 @@ app.use('/books', bookRoutes);
 app.use('/users', userRoutes);
 app.use('/api', issueRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Backend running' });
+});
 
 // --- Serve Frontend in Production (optional) ---
 // if (process.env.NODE_ENV === 'production') {
