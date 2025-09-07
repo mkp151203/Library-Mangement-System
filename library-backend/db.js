@@ -11,12 +11,7 @@ const dbConfig = {
   password: process.env.DB_PASSWORD,
   connectString: process.env.DB_CONNECT_STRING
 };
-// 💡 Add this section to check the values
-console.log('--- Environment Variables Check ---');
-console.log('DB_USER:', dbConfig.user);
-console.log('DB_PASSWORD:', dbConfig.password ? '****' : 'undefined'); // Mask the password for security
-console.log('DB_CONNECT_STRING:', dbConfig.connectString);
-console.log('---------------------------------');
+
 export async function getConnection() {
   try {
     const connection = await oracledb.getConnection(dbConfig);
