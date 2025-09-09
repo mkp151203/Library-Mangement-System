@@ -1,13 +1,23 @@
 #!/bin/bash
 
-# Create a directory for the unzipped wallet inside the project source directory
-mkdir -p /opt/render/project/src/wallet
+# Exit if any command fails
+set -e
 
-# Unzip the secure wallet file from Render's secret file location
-unzip /etc/secrets/wallet.zip -d /opt/render/project/src/wallet
+# Temporary directory for wallet
+WALLET_DIR=/tmp/wallet
+WALLET_ZIP=/tmp/wallet.zip
 
-# Set the TNS_ADMIN environment variable to the unzipped wallet location
-export TNS_ADMIN=/opt/render/project/src/wallet
+# Create directory
+mkdir -p $WALLET_DIR
 
-# Run the Node.js application, correcting the file name from 'sever.js' to 'server.js'
+# Decode base64 wallet string into zip file
+echo "$WALLET_B64" | base64 -d > $WALLET_ZIP
+
+# Unzip wallet
+unzip -o $WALLET_ZIP -d $WALLET_DIR
+
+# Export TNS_ADMIN so OracleDB knows where to look
+export TNS_ADMIN=$WALLET_DIR
+
+# Start the Node.js application
 node server.js
