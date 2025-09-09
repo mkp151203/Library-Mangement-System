@@ -22,12 +22,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 15, 35, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(15, 15, 35, 0.337);
+  backdrop-filter: blur(2.5px);
+}
+.spinner {
+  margin: 1rem auto;
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .login-form {
-  background: rgba(30, 30, 46, 0.95);
+  background: rgba(30, 30, 46, 0.742);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 3rem;
