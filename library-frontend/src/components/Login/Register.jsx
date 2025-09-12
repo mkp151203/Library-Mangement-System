@@ -1,18 +1,31 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Login.css'; // Reuse login styles
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // 👁️ icons
+import './Login.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Register() {
-  const [form, setForm] = useState({ username: '', password: '', role: 'student', specialCode: '' });
-  const [loading, setLoading] = useState(false); // ⏳ loading state
+  const [form, setForm] = useState({ 
+    username: '', 
+    password: '', 
+    confirmPassword: '',
+    role: 'student', 
+    specialCode: '' 
+  });
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // show loader
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
 
+    setLoading(true);
     try {
       const res = await fetch(`${API_URL}/register`, {
         method: 'POST',
@@ -32,7 +45,7 @@ function Register() {
       console.error("Registration error:", err);
       alert("Error connecting to server");
     } finally {
-      setLoading(false); // hide loader after response
+      setLoading(false);
     }
   };
 
@@ -40,9 +53,9 @@ function Register() {
     <div className="login-container">
       <form className={`login-form ${loading ? 'loading' : ''}`} onSubmit={handleSubmit}>
         <h2>Register Account</h2>
+        {loading && <div className="spinner"></div>}
 
-        {loading && <div className="spinner"></div>} {/* spinner when loading */}
-
+        {/* Username */}
         <div className="form-group">
           <label>Username:</label>
           <input
@@ -54,17 +67,43 @@ function Register() {
           />
         </div>
 
-        <div className="form-group">
+        {/* Password */}
+        <div className="form-group password-group">
           <label>Password:</label>
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={form.password}
             disabled={loading}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
           />
+          <span 
+            className="toggle-eye" 
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </div>
 
+        {/* Confirm Password */}
+        <div className="form-group password-group">
+          <label>Confirm Password:</label>
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            value={form.confirmPassword}
+            disabled={loading}
+            onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+            required
+          />
+          <span 
+            className="toggle-eye" 
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+        </div>
+
+        {/* Role */}
         <div className="form-group">
           <label>Role:</label>
           <select
@@ -77,6 +116,7 @@ function Register() {
           </select>
         </div>
 
+        {/* Special Code (only for admin) */}
         {form.role === 'admin' && (
           <div className="form-group">
             <label>Special Code:</label>

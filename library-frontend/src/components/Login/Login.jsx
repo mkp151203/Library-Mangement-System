@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css';
-
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // 👁️ icon
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
   const [credentials, setCredentials] = useState({ username: '', password: '', role: 'student' });
-  const [loading, setLoading] = useState(false); // ⏳ login loader
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showDummyCreds, setShowDummyCreds] = useState(false); // New state to control dialog visibility
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // show loader when login starts
+    setLoading(true);
 
     try {
       const res = await fetch(`${API_URL}/login`, {
@@ -34,7 +36,7 @@ function Login() {
       console.error("Login error:", err);
       alert("Error connecting to server");
     } finally {
-      setLoading(false); // hide loader after response
+      setLoading(false);
     }
   };
 
@@ -43,7 +45,7 @@ function Login() {
       <form className={`login-form ${loading ? 'loading' : ''}`} onSubmit={handleSubmit}>
         <h2>Library Management System</h2>
 
-        {loading && <div className="spinner"></div>} {/* show loader on login */}
+        {loading && <div className="spinner"></div>}
 
         <div className="form-group">
           <label>Username:</label>
@@ -54,14 +56,22 @@ function Login() {
             onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
           />
         </div>
-        <div className="form-group">
+        <div className="form-group password-group">
           <label>Password:</label>
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={credentials.password}
             disabled={loading}
             onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+            required
           />
+
+          <span
+            className="toggle-eye"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </div>
         <div className="form-group">
           <label>Role:</label>
@@ -79,8 +89,50 @@ function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        <p>Don't have an account? <Link to="/register">Register here</Link></p>
+
+
+        {/* New button to show dummy credentials */}
+        <button
+          type="button"
+          className="show-creds-btn"
+          onClick={() => setShowDummyCreds(true)}
+        >
+          Show Demo Accounts
+        </button>
+        <p>
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
       </form>
+
+      {/* Dummy credentials dialog box */}
+      {showDummyCreds && (
+        <div className="dialog-overlay">
+          <div className="dialog-box">
+            <h3>Demo Login Credentials</h3>
+            <p>
+              <strong>Student:</strong>
+              <br />
+              Username: <code>student</code>
+              <br />
+              Password: <code>student123</code>
+            </p>
+            <p>
+              <strong>Admin:</strong>
+              <br />
+              Username: <code>admin</code>
+              <br />
+              Password: <code>admin123</code>
+            </p>
+            <p>
+              <br />
+              Special Code For New Admin :<code>password123</code>
+            </p>
+            <button className="close-btn" onClick={() => setShowDummyCreds(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
