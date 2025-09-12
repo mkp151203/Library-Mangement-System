@@ -7,6 +7,7 @@ function AdminDashboard() {
   const [stats, setStats] = useState({});
   const [activities, setActivities] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false); // Add this
 
   const userId = localStorage.getItem('user_id');
 
@@ -41,23 +42,31 @@ function AdminDashboard() {
           <div className="nav-title">
             <h1>Admin Dashboard</h1>
           </div>
-          <div className="user-info">
-            <img
-              src={
-                profile?.avatar ||
-                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
-              }
-              alt={profile?.name || 'Admin Avatar'}
-              className="user-avatar"
-            />
-            <div className="user-details">
-              <h3>{profile?.name || 'Admin'}</h3>
-              <p>{profile?.role || 'Administrator'}</p>
+          <div className="nav-right">
+            <button
+              className="hamburger-btn"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              ☰
+            </button>
+            <div className="user-info">
+              <img
+                src={
+                  profile?.avatar ||
+                  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
+                }
+                alt={profile?.name || 'Admin Avatar'}
+                className="user-avatar"
+              />
+              <div className="user-details">
+                <h3>{profile?.name || 'Admin'}</h3>
+                <p>{profile?.role || 'Administrator'}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="nav-links">
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <Link to="/books"><span className="nav-icon">📚</span>Manage Books</Link>
           <Link to="/issue-book"><span className="nav-icon">📖</span>Issue Book</Link>
           <Link to="/return-book"><span className="nav-icon">↩️</span>Return Book</Link>
@@ -66,6 +75,7 @@ function AdminDashboard() {
           <Link to="/login"><span className="nav-icon">🚪</span>Logout</Link>
         </div>
       </nav>
+
 
       <div className="dashboard-content">
         <div className="welcome-section">
@@ -110,7 +120,7 @@ function AdminDashboard() {
                   <div key={activity.id} className="activity-card">
                     <div className="activity-icon">
                       {activity.action === 'Book returned' ? '📚' :
-                       activity.action === 'Book issued' ? '📖' : '➕'}
+                        activity.action === 'Book issued' ? '📖' : '➕'}
                     </div>
                     <div className="activity-details">
                       <h4>{activity.action}</h4>

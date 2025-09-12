@@ -712,3 +712,104 @@
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
+/* Hamburger button */
+.hamburger-btn {
+  font-size: 1.2rem;       /* size of the ☰ icon */
+  width: 50px;              /* fixed width */
+  height: 50px;             /* fixed height */
+  /* background: transparent;  remove default bg */
+  border: none;             /* remove border */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  flex: 0 0 auto;           /* prevent stretching */
+  border-radius: 8px;       /* optional, for nicer look */
+}
+
+
+
+.nav-header {
+  display: flex;
+  justify-content: space-between; /* title left, right side grouped */
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between hamburger and avatar */
+}
+
+.hamburger-btn {
+  font-size: 1.2rem;
+  width: 50px;
+  height: 50px;
+  /* background: transparent; */
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+/* Mobile nav hidden by default */
+.nav-links {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+.hamburger-btn {
+  display: none;
+}
+
+/* Show hamburger and hide nav links on small screens */
+@media (max-width: 768px) {
+  .user-info{
+   border: none ;
+   background: none;
+  }
+  .nav-title h1 {
+    display: none;
+  }
+  .hamburger-btn {
+    transform: translateY(10%)!important;
+    display: flex;
+  }
+   .dashboard-nav {
+    backdrop-filter: none!important; /* remove blur */
+    background: #ffffff00; 
+    margin:0; 
+    border-bottom: none;    /* solid background for mobile */
+  }
+    .nav-right {
+    justify-content: space-between;
+    width: 100%; /* stretch row so hamburger left, avatar right */
+  }
+
+  .hamburger-btn {
+    order: -1; /* push hamburger to left side */
+  }
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .nav-links.open {
+    max-height: 500px; /* Enough to show all links */
+    opacity: 1;
+  }
+
+  .nav-links a {
+    text-align: left;
+    padding: 1rem;
+  }
+
+  .user-info {
+    order: 1;
+    margin-top: 1rem;
+  }
+}

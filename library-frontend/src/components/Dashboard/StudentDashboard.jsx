@@ -9,7 +9,7 @@ function StudentDashboard() {
   const [booksBorrowed, setBooksBorrowed] = useState(0);
   const [nextDueDate, setNextDueDate] = useState('Loading...');
   const [profile, setProfile] = useState(null);
-
+  const [menuOpen, setMenuOpen] = useState(false);
   const userId = localStorage.getItem('user_id'); // Set at login
 
   useEffect(() => {
@@ -47,23 +47,31 @@ function StudentDashboard() {
           <div className="nav-title">
             <h1>Student Dashboard</h1>
           </div>
-          <div className="user-info">
-            <img
-              src={
-                profile?.avatar ||
-                'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100'
-              }
-              alt={profile?.name || 'Student Avatar'}
-              className="user-avatar"
-            />
-            <div className="user-details">
-              <h3>{profile?.name || 'Student'}</h3>
-              <p>{profile?.role || 'Student'}</p>
+          <div className="nav-right">
+            <button
+              className="hamburger-btn"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              ☰
+            </button>
+            <div className="user-info">
+              <img
+                src={
+                  profile?.avatar ||
+                  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
+                }
+                alt={profile?.name || 'Avatar'}
+                className="user-avatar"
+              />
+              <div className="user-details">
+                <h3>{profile?.name || 'Student'}</h3>
+                <p>{profile?.role || 'Student'}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="nav-links">
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <Link to="/books"><span className="nav-icon">📚</span>Browse Books</Link>
           <Link to="/issued-books"><span className="nav-icon">📖</span>My Books</Link>
           <Link to="/profile"><span className="nav-icon">👤</span>Profile</Link>
