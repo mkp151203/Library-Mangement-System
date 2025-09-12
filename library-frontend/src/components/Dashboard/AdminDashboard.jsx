@@ -49,7 +49,7 @@ function AdminDashboard() {
             >
               ☰
             </button>
-            <div className="user-info">
+            <Link to="/profile" className="user-info">
               <img
                 src={
                   profile?.avatar ||
@@ -62,7 +62,7 @@ function AdminDashboard() {
                 <h3>{profile?.name || 'Admin'}</h3>
                 <p>{profile?.role || 'Administrator'}</p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 

@@ -54,7 +54,7 @@ function StudentDashboard() {
             >
               ☰
             </button>
-            <div className="user-info">
+            <Link to="/profile" className="user-info">
               <img
                 src={
                   profile?.avatar ||
@@ -67,7 +67,7 @@ function StudentDashboard() {
                 <h3>{profile?.name || 'Student'}</h3>
                 <p>{profile?.role || 'Student'}</p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 
