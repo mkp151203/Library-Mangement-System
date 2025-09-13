@@ -251,7 +251,6 @@ The frontend development server will launch and be accessible at `http://localho
 - [ ] **Role-Based Access Control (RBAC):** Enhance security by adding distinct permissions for `admin` and `student` roles.
 - [ ] **Due Date Notifications:** Add automated email or in-app notifications for upcoming book return deadlines.
 - [ ] **Inventory Management:** Create a dashboard for librarians to add, update, and remove books from the library's collection.
-- [ ] **Fine Calculation:** Automatically calculate and apply fines for overdue books.
 
 ## 📄 License
 
