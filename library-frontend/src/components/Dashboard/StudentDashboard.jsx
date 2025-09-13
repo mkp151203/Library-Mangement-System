@@ -10,36 +10,65 @@ function StudentDashboard() {
   const [nextDueDate, setNextDueDate] = useState('Loading...');
   const [profile, setProfile] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
   const userId = localStorage.getItem('user_id'); // Set at login
 
   useEffect(() => {
-    // Fetch student dashboard stats
+    if (!userId) return;
+
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+
+    // 1️⃣ Load cached data first
+    const cachedDashboard = localStorage.getItem(`student_dashboard_${userId}`);
+    const cachedProfile = localStorage.getItem(`student_profile_${userId}`);
+
+    if (cachedDashboard) {
+      const data = JSON.parse(cachedDashboard);
+      setBooksBorrowed(data.booksIssued);
+      setNextDueDate(data.nextDueDate || 'No active books');
+    }
+
+    if (cachedProfile) {
+      setProfile(JSON.parse(cachedProfile));
+    }
+
+    // 2️⃣ Always fetch fresh in background
     const fetchDashboardStats = async () => {
       try {
-        const res = await axios.get(`${API_URL}/dashboard/student/${userId}`,{
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        const res = await axios.get(`${API_URL}/dashboard/student/${userId}`, {
+          headers,
         });
         setBooksBorrowed(res.data.booksIssued);
         setNextDueDate(res.data.nextDueDate || 'No active books');
+
+        // update cache
+        localStorage.setItem(
+          `student_dashboard_${userId}`,
+          JSON.stringify(res.data)
+        );
       } catch (err) {
         console.error('❌ Failed to fetch dashboard stats:', err);
       }
     };
 
-    // Fetch student profile
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`${API_URL}/users/${userId}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}});
+        const res = await axios.get(`${API_URL}/users/${userId}`, { headers });
         setProfile(res.data);
+
+        // update cache
+        localStorage.setItem(
+          `student_profile_${userId}`,
+          JSON.stringify(res.data)
+        );
       } catch (err) {
         console.error('❌ Failed to fetch profile:', err);
       }
     };
 
-    if (userId) {
-      fetchDashboardStats();
-      fetchProfile();
-    }
+    fetchDashboardStats();
+    fetchProfile();
   }, [userId]);
 
   return (
@@ -74,10 +103,18 @@ function StudentDashboard() {
         </div>
 
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
-          <Link to="/books"><span className="nav-icon">📚</span>Browse Books</Link>
-          <Link to="/issued-books"><span className="nav-icon">📖</span>My Books</Link>
-          <Link to="/profile"><span className="nav-icon">👤</span>Profile</Link>
-          <Link to="/login"><span className="nav-icon">🚪</span>Logout</Link>
+          <Link to="/books">
+            <span className="nav-icon">📚</span>Browse Books
+          </Link>
+          <Link to="/issued-books">
+            <span className="nav-icon">📖</span>My Books
+          </Link>
+          <Link to="/profile">
+            <span className="nav-icon">👤</span>Profile
+          </Link>
+          <Link to="/login">
+            <span className="nav-icon">🚪</span>Logout
+          </Link>
         </div>
       </nav>
 
