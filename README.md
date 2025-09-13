@@ -18,6 +18,7 @@ A full-stack Library Management System built with a React frontend, Node.js/Expr
 - **Book Management:** Seamlessly issue books to users and track the history of all issued books.
 - **Responsive UI:** A modern and intuitive user interface built with React for a great user experience on any device.
 - **RESTful Backend API:** A robust backend powered by Node.js and Express, providing clear and structured routes for interacting with the OracleDB database.
+- **JWT-based authentication** for secure session management and protected routes, ensuring a reliable and scalable backend.
 
 ## 📂 Project Structure
 
