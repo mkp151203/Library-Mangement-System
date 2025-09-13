@@ -21,7 +21,7 @@ function UserProfile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get(`${API_URL}/users/${userId}`);
+      const res = await axios.get(`${API_URL}/users/${userId}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}});
       console.log('✅ Profile fetched:', res.data);
       if (res.data) {
         setProfile(res.data);

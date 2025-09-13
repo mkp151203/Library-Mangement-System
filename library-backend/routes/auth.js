@@ -2,7 +2,7 @@ import express from 'express';
 import oracledb from 'oracledb';
 import bcrypt from 'bcrypt';
 import { getConnection } from '../db.js';
-
+import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 // 🔐 LOGIN ROUTE (no changes)
@@ -36,12 +36,23 @@ router.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
+   
+
+    // After successful password verification in login:
+    const token = jwt.sign(
+      { id: user.ID, username: user.USERNAME, role: user.ROLE },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+
 
     res.json({
       message: 'Login successful',
       id: user.ID,
       username: user.USERNAME,
-      role: user.ROLE
+      role: user.ROLE,
+      token
     });
 
   } catch (err) {

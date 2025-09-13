@@ -16,7 +16,9 @@ function StudentDashboard() {
     // Fetch student dashboard stats
     const fetchDashboardStats = async () => {
       try {
-        const res = await axios.get(`${API_URL}/dashboard/student/${userId}`);
+        const res = await axios.get(`${API_URL}/dashboard/student/${userId}`,{
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
         setBooksBorrowed(res.data.booksIssued);
         setNextDueDate(res.data.nextDueDate || 'No active books');
       } catch (err) {
@@ -27,7 +29,7 @@ function StudentDashboard() {
     // Fetch student profile
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`${API_URL}/users/${userId}`);
+        const res = await axios.get(`${API_URL}/users/${userId}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}});
         setProfile(res.data);
       } catch (err) {
         console.error('❌ Failed to fetch profile:', err);

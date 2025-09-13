@@ -14,7 +14,7 @@ function IssuedBooks() {
         const role = localStorage.getItem('role');
 
         const response = await fetch(
-          `${API_URL}/books/issued?userId=${userId}&role=${role}`
+          `${API_URL}/books/issued?userId=${userId}&role=${role}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}}
         );
         const data = await response.json();
         setIssuedBooks(data);

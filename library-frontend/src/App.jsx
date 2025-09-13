@@ -8,6 +8,7 @@ import IssueBook from './components/Books/IssueBook';
 import ReturnBook from './components/Books/ReturnBook';
 import IssuedBooks from './components/Books/IssuedBooks';
 import UserProfile from './components/Profile/UserProfile';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -15,16 +16,70 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/books" element={<Books />} />
-          <Route path="/issue-book" element={<IssueBook />} />
-          <Route path="/return-book" element={<ReturnBook />} />
-          <Route path="/issued-books" element={<IssuedBooks />} />
-          <Route path="/profile" element={<UserProfile />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/student"
+            element={
+              <ProtectedRoute role="student">
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/books"
+            element={
+              <ProtectedRoute>
+                <Books />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/issue-book"
+            element={
+              <ProtectedRoute role="admin">
+                <IssueBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/return-book"
+            element={
+              <ProtectedRoute role="admin">
+                <ReturnBook />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/issued-books"
+            element={
+              <ProtectedRoute role="admin">
+                <IssuedBooks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>

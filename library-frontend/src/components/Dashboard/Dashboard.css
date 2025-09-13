@@ -777,7 +777,8 @@
     display: flex;
   }
    .dashboard-nav {
-    backdrop-filter: none!important; /* remove blur */
+   
+    /* backdrop-filter: none!important; remove blur */
     background: #ffffff00; 
     margin:0; 
     border-bottom: none;    /* solid background for mobile */

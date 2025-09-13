@@ -1,10 +1,11 @@
 import express from 'express';
 import { getConnection } from '../db.js';
-
+import { authenticateToken } from '../middleware/jwt.js';
+import { authorizeRoles } from '../middleware/auth.js';
 const router = express.Router();
 
 // GET all books
-router.get('/', async (req, res) => {
+router.get('/',authenticateToken, async (req, res) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute(
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST a new book
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
   const { title, author, genre, publishedYear, cover } = req.body;
 
   try {
@@ -71,7 +72,7 @@ router.post('/', async (req, res) => {
 
 
 // DELETE a book by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     const { id } = req.params;
   
     try {

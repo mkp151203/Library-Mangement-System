@@ -1,10 +1,11 @@
 import express from 'express';
 import { getConnection } from '../db.js';
-
+import { authenticateToken } from '../middleware/jwt.js';
+import { authorizeRoles } from '../middleware/auth.js';
 const router = express.Router();
 
 // POST /issue — issue a book
-router.post('/issue', async (req, res) => {
+router.post('/issue',authenticateToken, authorizeRoles('admin'), async (req, res) => {
   const { studentId, bookId, dueDate } = req.body;
 
   const checkAvailabilityQuery = `
@@ -57,7 +58,7 @@ router.post('/issue', async (req, res) => {
 });
 
 // POST /return — return a book
-router.post('/return', async (req, res) => {
+router.post('/return',authenticateToken, authorizeRoles('admin'), async (req, res) => {
   const { studentId, bookId } = req.body;
 
   const returnQuery = `

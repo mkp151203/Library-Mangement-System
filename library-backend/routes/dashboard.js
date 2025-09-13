@@ -1,11 +1,12 @@
 import express from 'express';
 import { getConnection } from '../db.js';
-
+import { authenticateToken } from '../middleware/jwt.js';
+import { authorizeRoles } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // 📊 Dashboard stats API
-router.get('/stats', async (req, res) => {
+router.get('/stats', authenticateToken, async (req, res) => {
   let conn;
   try {
     conn = await getConnection();
@@ -36,7 +37,7 @@ router.get('/stats', async (req, res) => {
 });
 
 // 🕓 Recent activities (last 5)
-router.get('/recent-activities', async (req, res) => {
+router.get('/recent-activities', authenticateToken, authorizeRoles('admin'), async (req, res) => {
   let conn;
   try {
     conn = await getConnection();
@@ -68,8 +69,8 @@ router.get('/recent-activities', async (req, res) => {
         )
         WHERE ROWNUM <= 5
       `);
-      
-      
+
+
 
     const activities = result.rows.map(row => ({
       id: row[0],
@@ -87,41 +88,45 @@ router.get('/recent-activities', async (req, res) => {
     if (conn) await conn.close();
   }
 });
-router.get('/student/:userId', async (req, res) => {
-    const userId = req.params.userId;
-    try {
-      const connection = await getConnection();
-  
-      const [profileRes, dueRes] = await Promise.all([
-        connection.execute(
-          `SELECT books_issued FROM user_profiles WHERE user_id = :userId`,
-          [userId],
-          { outFormat: 4002 }
-        ),
-        connection.execute(
-          `SELECT MIN(due_date) AS next_due_date 
+router.get('/student/:userId', authenticateToken, authorizeRoles('student'), async (req, res) => {
+  const userId = req.params.userId;
+  if (req.user.id !== parseInt(userId)) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  try {
+    const connection = await getConnection();
+
+    const [profileRes, dueRes] = await Promise.all([
+      connection.execute(
+        `SELECT books_issued FROM user_profiles WHERE user_id = :userId`,
+        [userId],
+        { outFormat: 4002 }
+      ),
+      connection.execute(
+        `SELECT MIN(due_date) AS next_due_date 
            FROM issued_books 
            WHERE user_id = :userId AND returned = 'N'`,
-          [userId],
-          { outFormat: 4002 }
-        )
-      ]);
-  
-      const booksIssued = profileRes.rows[0]?.BOOKS_ISSUED || 0;
-      const dueDate = dueRes.rows[0]?.NEXT_DUE_DATE;
-      const formattedDueDate = dueDate
-        ? new Date(dueDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })
-        : null;
-  
-      await connection.close();
-      res.json({ booksIssued, nextDueDate: formattedDueDate });
-    } catch (err) {
-      console.error('❌ Error fetching student dashboard:', err);
-      res.status(500).json({ error: 'Failed to load student dashboard' });
-    }
-  });
+        [userId],
+        { outFormat: 4002 }
+      )
+    ]);
+
+    const booksIssued = profileRes.rows[0]?.BOOKS_ISSUED || 0;
+    const dueDate = dueRes.rows[0]?.NEXT_DUE_DATE;
+    const formattedDueDate = dueDate
+      ? new Date(dueDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+      : null;
+
+    await connection.close();
+    res.json({ booksIssued, nextDueDate: formattedDueDate });
+  } catch (err) {
+    console.error('❌ Error fetching student dashboard:', err);
+    res.status(500).json({ error: 'Failed to load student dashboard' });
+  }
+});
 export default router;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BackButton from '../common/BackButton';
 import './Books.css';
+axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 const API_URL = import.meta.env.VITE_API_URL;
 function Books() {
   const [books, setBooks] = useState([]);
@@ -32,6 +33,7 @@ function Books() {
     e.preventDefault();
     try {
       await axios.post(`${API_URL}/books`, newBook);
+      alert('✅ Book added successfully!');
       setNewBook({
         title: '',
         author: '',
@@ -41,6 +43,7 @@ function Books() {
       });
       fetchBooks();
     } catch (err) {
+      alert('❌ Failed to add book: ' + (err.response?.data?.error || err.message));
       console.error('❌ Failed to add book:', err);
     }
   };
@@ -53,6 +56,7 @@ function Books() {
     if (isConfirmed) {
       try {
         await axios.delete(`${API_URL}/books/${id}`);
+        alert('✅ Book Deleted successfully!');
         fetchBooks();
       } catch (err) {
         alert(err.response?.data?.error || '❌ Failed to delete book');

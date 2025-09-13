@@ -12,21 +12,22 @@ function AdminDashboard() {
   const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
+    const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
     // Fetch dashboard stats
-    fetch(`${API_URL}/dashboard/stats`)
+    fetch(`${API_URL}/dashboard/stats`,{ headers })
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(err => console.error('Error fetching stats:', err));
 
     // Fetch recent activities
-    fetch(`${API_URL}/dashboard/recent-activities`)
+    fetch(`${API_URL}/dashboard/recent-activities`,{ headers })
       .then(res => res.json())
       .then(data => setActivities(data))
       .catch(err => console.error('Error fetching activities:', err));
 
     // Fetch admin profile
     if (userId) {
-      fetch(`${API_URL}/users/${userId}`)
+      fetch(`${API_URL}/users/${userId}`,{ headers })
         .then(res => res.json())
         .then(data => {
           setProfile(data);

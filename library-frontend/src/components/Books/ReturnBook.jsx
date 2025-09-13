@@ -13,7 +13,10 @@ function ReturnBook() {
     try {
       const res = await fetch(`${API_URL}/api/return`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
         body: JSON.stringify(returnForm)
       });
   
