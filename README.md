@@ -206,7 +206,6 @@ DB_CONNECT_STRING=your connect string
 TNS_ADMIN=wallet location(if using autonomous database)
 WALLET_PASSWORD=WalletPassword
 JWT_SECRET=486789bd67d1638a46f7df9ad56297e (generate online)
-};
 ```
 
 The Frontend requires VITE_API_URL . You will need to update the connection details in `library-frontend/.env`.
