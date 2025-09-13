@@ -67,7 +67,7 @@ function App() {
           <Route
             path="/issued-books"
             element={
-              <ProtectedRoute role="admin">
+              <ProtectedRoute >
                 <IssuedBooks />
               </ProtectedRoute>
             }
