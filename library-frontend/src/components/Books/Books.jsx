@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BackButton from '../common/BackButton';
 import './Books.css';
-axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+
 const API_URL = import.meta.env.VITE_API_URL;
+
 function Books() {
   const [books, setBooks] = useState([]);
   const [newBook, setNewBook] = useState({
@@ -15,14 +16,21 @@ function Books() {
   });
 
   const userRole = localStorage.getItem('role');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
+    if (!token) {
+      console.error('No token found. Redirecting to login.');
+      return;
+    }
     fetchBooks();
-  }, []);
+  }, [token]);
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get(`${API_URL}/books`);
+      const res = await axios.get(`${API_URL}/books`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setBooks(res.data);
     } catch (err) {
       console.error('❌ Failed to fetch books:', err);
@@ -31,16 +39,14 @@ function Books() {
 
   const handleAddBook = async (e) => {
     e.preventDefault();
+    if (!token) return alert('You are not logged in.');
+    
     try {
-      await axios.post(`${API_URL}/books`, newBook);
-      alert('✅ Book added successfully!');
-      setNewBook({
-        title: '',
-        author: '',
-        genre: '',
-        publishedYear: '',
-        cover: ''
+      await axios.post(`${API_URL}/books`, newBook, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+      alert('✅ Book added successfully!');
+      setNewBook({ title: '', author: '', genre: '', publishedYear: '', cover: '' });
       fetchBooks();
     } catch (err) {
       alert('❌ Failed to add book: ' + (err.response?.data?.error || err.message));
@@ -49,20 +55,21 @@ function Books() {
   };
 
   const handleDeleteBook = async (id, title) => {
-    // Show confirmation dialog
+    if (!token) return alert('You are not logged in.');
+
     const isConfirmed = window.confirm(`Are you sure you want to delete "${title}"?`);
-    
-    // Only proceed with deletion if user clicked OK
-    if (isConfirmed) {
-      try {
-        await axios.delete(`${API_URL}/books/${id}`);
-        alert('✅ Book Deleted successfully!');
-        fetchBooks();
-      } catch (err) {
-        alert(err.response?.data?.error || '❌ Failed to delete book');
-      }
+    if (!isConfirmed) return;
+
+    try {
+      await axios.delete(`${API_URL}/books/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('✅ Book deleted successfully!');
+      fetchBooks();
+    } catch (err) {
+      alert(err.response?.data?.error || '❌ Failed to delete book');
+      console.error('❌ Failed to delete book:', err);
     }
-    // If canceled, do nothing
   };
 
   return (
@@ -70,7 +77,8 @@ function Books() {
       <BackButton />
       <h2>Library Books</h2>
 
-      {userRole !== 'student' && (
+      {/* Add book form for non-students */}
+      {userRole !== 'student' ? (
         <form className="add-book-form" onSubmit={handleAddBook}>
           <input
             type="text"
@@ -108,30 +116,27 @@ function Books() {
           />
           <button type="submit">Add Book</button>
         </form>
-      )}
-
-      {userRole === 'student' && (
+      ) : (
         <p style={{ color: 'gray', fontStyle: 'italic' }}>
           🔒 Only librarians can add books.
         </p>
       )}
 
+      {/* Book list */}
       <div className="books-list">
         {books.map((book) => (
           <div key={book.ID} className="book-card">
-            <img
-              src={book.COVER}
-              alt={book.TITLE}
-              className="book-cover"
-            />
+            <img src={book.COVER} alt={book.TITLE} className="book-cover" />
             <div className="book-card-content">
               <h3>{book.TITLE}</h3>
-              <p className="book-id"><strong>ID:</strong> {book.ID}</p>
-              <p className="book-author">By {book.AUTHOR}</p>
-              <p className="book-genre">{book.GENRE} ({book.PUBLISHEDYEAR})</p>
+              <p><strong>ID:</strong> {book.ID}</p>
+              <p>By {book.AUTHOR}</p>
+              <p>{book.GENRE} ({book.PUBLISHEDYEAR})</p>
               <p className={book.AVAILABLE === 'Y' ? 'status-available' : 'status-unavailable'}>
                 {book.AVAILABLE === 'Y' ? 'Available' : 'Checked Out'}
               </p>
+
+              {/* Delete button for non-students */}
               {userRole !== 'student' && book.AVAILABLE === 'Y' && (
                 <button
                   className="delete-book-btn"
